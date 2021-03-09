@@ -23,7 +23,7 @@ class MainManager(object):
 
     __instance = None
 
-    qos = 1
+    qos = 0
 
     # TODO register multiple topics.
     topics = []
