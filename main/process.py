@@ -1,10 +1,30 @@
 import hexdump
 
+from log import logger
+from constant import Constant
 from main.module.mqtt_subscribe import MQTTSubscriber
 
 
+# TODO thread or async, queue. (Msg Object)
 class MsgProcessor(object):
-    pass
+
+    def decode(self):
+        pass
+
+    def transfer(self):
+        pass
+
+    def process(self):
+        pass
+
+    def save(self):
+        pass
+
+    def work(self):
+        pass
+
+
+msg_processor = MsgProcessor()
 
 
 def dump_hex(bs: bytes):
@@ -26,7 +46,7 @@ class MainManager(object):
     qos = 0
 
     # TODO register multiple topics.
-    topics = []
+    topics = [Constant.DATA_TOPIC, Constant.COMMAND_TOPIC]
 
     def __new__(cls):
         if not MainManager.__instance:
@@ -48,10 +68,10 @@ class MainManager(object):
             msg_payload = f'binary:{dump_hex(msg.payload)}'
 
         # Using log to record.
-        # logger.info(f"Received topic: {msg_topic}")
-        # logger.info(f"Received Msg: {msg_payload}")
-        print(f"Received topic: {msg_topic}")
-        print(f"Received Msg: {msg_payload}")
+        logger().info(f"Received topic: {msg_topic}")
+        logger().info(f"Received Msg: {msg_payload}")
+
+        # TODO msg_processor
         # TODO open new MsgProcessor Object.
 
     def start(self):
