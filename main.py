@@ -1,8 +1,9 @@
 from log import set_log, Logger
 
+from main.process import MainExecutor
+
 
 if __name__ == '__main__':
     set_log(Logger())
-    # TODO main.py
-    # TODO run project
-    # TODO MQTT Subscriber
+    executor = MainExecutor()
+    executor.work()

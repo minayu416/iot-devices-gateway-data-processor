@@ -1,5 +1,8 @@
 from log import logger
+
+from config import config
 from constant import Constant
+
 from main.module.mqtt_subscribe import MQTTSubscriber
 
 
@@ -35,28 +38,25 @@ def dump_hex(bs: bytes):
     return ':'.join('{:02X}'.format(b) for b in bs)
 
 
-class MainManager(object):
+class MainExecutor(object):
 
-    # singleton design pattern
+    # Singleton design pattern
 
     __instance = None
 
-    qos = 0
-
-    # TODO register multiple topics.
-    topics = [Constant.DATA_TOPIC, Constant.COMMAND_TOPIC]
+    # permit multiple topics format: [("my/topic", 0), ("another/topic", 2)]
+    # [(topic1, qos1), (topic2, qos2)]
+    topics = [(Constant.DATA_TOPIC, 0), (Constant.COMMAND_TOPIC, 0)]
 
     def __new__(cls):
-        if not MainManager.__instance:
-            MainManager.__instance = object.__new__(cls)
-        return MainManager.__instance
+        if not MainExecutor.__instance:
+            MainExecutor.__instance = object.__new__(cls)
+        return MainExecutor.__instance
 
     def on_connect(self, client, userdata, flags, rc):
         # subscribe when connected.
-        qos = self.qos
-        # TODO Implement receive multiple topics.
         topic = self.topics
-        client.subscribe(topic, qos=qos)
+        client.subscribe(topic)
 
     def on_message(self, client, userdata, msg):
         msg_topic = msg.topic
@@ -72,10 +72,9 @@ class MainManager(object):
         # TODO msg_processor
         # TODO open new MsgProcessor Object.
 
-    def start(self):
-        # TODO MQTT subscribe
-        # TODO change params
-        mqtt_subscriber = MQTTSubscriber("subscriber", None, None, "127.0.0.1", 6638, True)
+    def work(self):
+        mqtt_subscriber = MQTTSubscriber(config.mqtt.get("subscriber"), None, None,
+                                         config.mqtt.get("host"), config.mqtt.get("port"), True)
         mqtt_subscriber.subscribe(self.on_connect, self.on_message)
 
         # listen at on_message
