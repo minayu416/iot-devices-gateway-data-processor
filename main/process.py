@@ -1,5 +1,3 @@
-import hexdump
-
 from log import logger
 from constant import Constant
 from main.module.mqtt_subscribe import MQTTSubscriber
